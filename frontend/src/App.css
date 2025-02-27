@@ -1,0 +1,73 @@
+/* Main application styles for The Perfect Touch e-commerce platform */
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #343a40;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.footer {
+  background-color: #343a40;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.card {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  margin-bottom: 20px;
+}
+
+.card img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.wishlist {
+  color: #ff4081;
+}
+
+.review {
+  font-style: italic;
+  color: #6c757d;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .header, .footer {
+    padding: 5px 0;
+  }
+}
