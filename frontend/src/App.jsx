@@ -12,14 +12,14 @@ import Checkout from "./components/Cart/Checkout";
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import ProfilePage from './pages/ProfilePage';
-import AdminLogin from "./components/Auth/AdminLogin";
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
-import ManageProducts from "./components/Admin/ManageProducts";
+import Dashboard from "./components/Admin/Dashboard";
 
-const PrivateRoute = ({ children }) => {
-  const adminToken = localStorage.getItem("adminToken");
-  return adminToken ? children : <Navigate to="/admin/login" />;
+const PrivateRoute = ({ children, role }) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  return token && user && user.role === role ? children : <Navigate to="/login" />;
 };
 
 function App() {
@@ -34,12 +34,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
         <Route
-          path="/admin/manage-products"
+          path="/admin/dashboard"
           element={
-            <PrivateRoute>
-              <ManageProducts />
+            <PrivateRoute role="admin">
+              <Dashboard />
             </PrivateRoute>
           }
         />

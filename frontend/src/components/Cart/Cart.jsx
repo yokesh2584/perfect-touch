@@ -3,7 +3,7 @@ import { CartContext } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const { cartItems, removeFromCart, clearCart, loading } = useContext(CartContext);
 
   const handleRemove = (id) => {
     removeFromCart(id);
@@ -25,7 +25,9 @@ const Cart = () => {
     }
   };
 
-  // console.log('Cart items:', cartItems); // Debugging line
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mt-5">
@@ -40,7 +42,6 @@ const Cart = () => {
           <ul className="list-group">
             {cartItems.map((item) => {
               const imageSrc = getImageSrc(item.image);
-              // console.log('Image source:', imageSrc); // Debugging line
               return (
                 <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
                   <div className="d-flex align-items-center">

@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -12,16 +13,22 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate('/'); // Redirect to home after successful login
+      const response = await axios.post('http://localhost:3000/api/auth/login', { email, password });
+      const { token, user } = response.data;
+      login(token, user);
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError('Invalid email or password');
-      console.error('Login error:', err); // Add this line to log the error
+      console.error('Login error:', err);
     }
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container my-5">
       <h2>Login</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleLogin}>

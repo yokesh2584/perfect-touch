@@ -1,58 +1,136 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Modal, Form } from 'react-bootstrap';
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
+  const [show, setShow] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '', image: '' });
+
+  const fetchProducts = async () => {
+    const adminToken = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:3000/api/products', {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    });
+    setProducts(response.data);
+  };
+
+  const handleShow = (product) => {
+    setCurrentProduct(product);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setCurrentProduct({ name: '', price: '', description: '', image: '' });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentProduct({ ...currentProduct, [name]: value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCurrentProduct({ ...currentProduct, image: reader.result });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const adminToken = localStorage.getItem('token');
+    if (currentProduct._id) {
+      await axios.put(`http://localhost:3000/api/products/${currentProduct._id}`, currentProduct, {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      });
+    } else {
+      await axios.post('http://localhost:3000/api/products', currentProduct, {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      });
+    }
+    fetchProducts();
+    handleClose();
+  };
+
+  const handleDelete = async (id) => {
+    const adminToken = localStorage.getItem('token');
+    await axios.delete(`http://localhost:3000/api/products/${id}`, {
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+      },
+    });
+    fetchProducts();
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/products'); // Adjust the API endpoint as necessary
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/products/${id}`); // Adjust the API endpoint as necessary
-      setProducts(products.filter(product => product._id !== id));
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
-  };
-
   return (
-    <div className="container mt-4">
-      <h1>Admin Dashboard</h1>
-      <Button variant="primary" className="mb-3">Add New Product</Button>
+    <div className="container my-4">
+      <h2>Admin Dashboard</h2>
+      <Button variant="primary" onClick={() => handleShow({})}>Add Product</Button>
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Price</th>
+            <th>Description</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {products.map(product => (
+          {products.map((product) => (
             <tr key={product._id}>
-              <td>{product._id}</td>
               <td>{product.name}</td>
-              <td>${product.price}</td>
+              <td>{product.price}</td>
+              <td>{product.description}</td>
               <td>
+                <Button variant="warning" onClick={() => handleShow(product)}>Edit</Button>
                 <Button variant="danger" onClick={() => handleDelete(product._id)}>Delete</Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{currentProduct._id ? 'Edit Product' : 'Add Product'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formProductName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" name="name" value={currentProduct.name} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="formProductPrice">
+              <Form.Label>Price</Form.Label>
+              <Form.Control type="number" name="price" value={currentProduct.price} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="formProductDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control as="textarea" name="description" value={currentProduct.description} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="formProductImage">
+              <Form.Label>Image</Form.Label>
+              <Form.Control type="file" onChange={handleImageChange} required />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              {currentProduct._id ? 'Update' : 'Add'}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Product = require("../models/Product");
+require('dotenv').config();
 
 const products = [
   {
@@ -56,7 +57,7 @@ const products = [
 
 const insertProducts = async () => {
   try {
-    await mongoose.connect("mongodb+srv://yokeshananthan:Yokesh2584mongodbpass@cluster2584.r9dcb.mongodb.net/perfect-touch?retryWrites=true&w=majority&appName=Cluster2584");
+    await mongoose.connect(process.env.MONGO_URI);
 
     await Product.deleteMany(); // Clear existing products
     await Product.insertMany(products);
