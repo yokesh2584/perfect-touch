@@ -39,14 +39,14 @@ const createProduct = async (req, res) => {
     description,
     image,
     category,
-    brand,
   });
 
   try {
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
   } catch (error) {
-    res.status(400).json({ message: "Invalid product data" });
+    console.log('create product error:', error);
+    res.status(400).json({ message: error });
   }
 };
 
@@ -67,7 +67,6 @@ const updateProduct = async (req, res) => {
     product.description = description || product.description;
     product.image = image || product.image;
     product.category = category || product.category;
-    product.brand = brand || product.brand;
 
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);
@@ -83,12 +82,14 @@ const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
+      console.log("product not found")
       return res.status(404).json({ message: "Product not found" });
     }
 
-    await product.remove();
+    await product.deleteOne({ id : req.params.id});
     res.status(200).json({ message: "Product removed" });
   } catch (error) {
+    console.error('error in deleting:', error)
     res.status(500).json({ message: "Server Error" });
   }
 };

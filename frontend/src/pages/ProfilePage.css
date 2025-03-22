@@ -1,0 +1,41 @@
+/* User Profile Page */
+.container {
+  max-width: 700px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.container h1 {
+  font-size: 2.5rem;
+  color: #ff758c;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.container h2 {
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.container p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.container p:last-child {
+  font-weight: bold;
+  color: #ff4f7b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}

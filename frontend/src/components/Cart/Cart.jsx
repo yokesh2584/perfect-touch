@@ -1,9 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 
 const Cart = () => {
   const { cartItems, removeFromCart, clearCart, loading } = useContext(CartContext);
+
+  useEffect(() => {}, [cartItems]);
 
   const handleRemove = (id) => {
     removeFromCart(id);
@@ -17,10 +19,8 @@ const Cart = () => {
 
   const getImageSrc = (image) => {
     if (image.startsWith('data:image')) {
-      // Image is already a Base64-encoded string
       return image;
     } else {
-      // Image is a local asset
       return `/images/${image}`;
     }
   };

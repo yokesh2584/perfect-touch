@@ -3,15 +3,12 @@ import axios from 'axios';
 import { Card, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
-// import './ProductList.css'; // Optional: Import a CSS file for additional styling
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedPrice, setSelectedPrice] = useState('');
   const { addToCart } = useContext(CartContext);
 
@@ -22,7 +19,6 @@ const ProductList = () => {
         setProducts(response.data);
         setFilteredProducts(response.data);
         setCategories([...new Set(response.data.map(product => product.category))]);
-        setBrands([...new Set(response.data.map(product => product.brand))]);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -33,17 +29,13 @@ const ProductList = () => {
 
   useEffect(() => {
     filterProducts();
-  }, [selectedCategory, selectedBrand, selectedPrice]);
+  }, [selectedCategory, selectedPrice]);
 
   const filterProducts = () => {
     let filtered = products;
 
     if (selectedCategory) {
       filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    if (selectedBrand) {
-      filtered = filtered.filter(product => product.brand === selectedBrand);
     }
 
     if (selectedPrice) {
@@ -70,15 +62,6 @@ const ProductList = () => {
               <option value="">All</option>
               {categories.map((category) => (
                 <option key={category} value={category}>{category}</option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="brandFilter">
-            <Form.Label>Brand</Form.Label>
-            <Form.Control as="select" value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)}>
-              <option value="">All</option>
-              {brands.map((brand) => (
-                <option key={brand} value={brand}>{brand}</option>
               ))}
             </Form.Control>
           </Form.Group>
